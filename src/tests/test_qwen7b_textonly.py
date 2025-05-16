@@ -3,8 +3,8 @@ from urllib.request import urlopen
 import librosa
 from transformers import AutoProcessor, Qwen2AudioForConditionalGeneration
 
-model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B" ,trust_remote_code=True, cache_dir = "../../models")
-processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B" ,trust_remote_code=True, cache_dir = "../../models")
+model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B" ,trust_remote_code=True, cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
+processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B" ,trust_remote_code=True, cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
 prompt = "What is the capital of France?"
 inputs = processor(text=prompt, return_tensors="pt")
 generated_ids = model.generate(**inputs, max_length=256)
