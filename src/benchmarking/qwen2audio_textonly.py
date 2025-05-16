@@ -36,8 +36,9 @@ def qwen2audio_textonly_inference(MMLU_data):
             conversation = qwen2audio_textonly_chat_prompt(row)
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
             inputs = processor(text=text, return_tensors="pt", padding=True)
-            print(inputs)
             inputs = inputs.to("cuda")
+            print(text)
+            print("Generating")
             generate_ids = model.generate(**inputs, max_length=256)
             print("Generating")
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
