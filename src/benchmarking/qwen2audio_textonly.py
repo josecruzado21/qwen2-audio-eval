@@ -16,7 +16,7 @@ script_dir = Path(__file__).resolve()
 def qwen2audio_textonly_chat_prompt(row):
     formatted_question = formatted_question_MMLU(row)
     conversation = [
-        {'role': 'system', 'content': "You are a helpful assistant. Answer the question with the correct letter"}, 
+        {'role': 'system', 'content': "Give ONLY the letter of the correct answer (A, B, C, or D). No explanation"}, 
         {"role": "user", "content": [
             {"type": "text", "text": formatted_question},
         ]}]
@@ -37,8 +37,7 @@ def qwen2audio_textonly_inference(MMLU_data):
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
             inputs = processor(text=text, return_tensors="pt", padding=True)
             inputs = inputs.to("cuda")
-            breakpoint()
-            generate_ids = model.generate(**inputs, max_length=256)
+            generate_ids = model.generate(**inputs, max_length=8)
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
             response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
             MMLU_data.at[idx, col_name] = response

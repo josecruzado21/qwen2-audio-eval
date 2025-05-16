@@ -23,7 +23,7 @@ inputs = processor(text=text, return_tensors="pt", padding=True)
 # inputs.input_ids = inputs.input_ids.to("cuda")
 inputs = inputs.to("cuda")
 start = time.time()
-generate_ids = model.generate(**inputs, max_new_tokens=16)
+generate_ids = model.generate(**inputs, max_new_tokens=8)
 print("Time to generate answer:", time.time() - start, "seconds")
 generate_ids = generate_ids[:, inputs.input_ids.size(1):]
 response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
