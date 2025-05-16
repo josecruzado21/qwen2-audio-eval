@@ -43,6 +43,6 @@ def qwen2audio_textonly_inference(MMLU_data):
             MMLU_data.to_csv(output_path)      
 
 if __name__ == "__main__":
-    MMLU_data = pd.read_csv(os.path.append(root_path, "data", "MMLU.csv"))
+    MMLU_data = pd.read_csv(os.path.join(root_path, "data", "MMLU.csv"))
     qwen2audio_textonly_inference(MMLU_data)
 
