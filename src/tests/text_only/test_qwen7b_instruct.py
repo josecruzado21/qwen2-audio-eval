@@ -14,9 +14,9 @@ model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-
 #     {"role": "user", "content": [
 #         {"type": "text", "text": "What is the capital of france?"},
 #     ]}]
-conversation = [{'role': 'system', 'content': 'You are a helpful assistant. Answer the question with the correct letter'}, 
+conversation = [{'role': 'system', 'content': 'You are an assistant, answer only with the letter of the right answer'}, 
                 {'role': 'user', 'content': 
-                 [{'type': 'text', 'text': 'Question: If a psychologist acts as both a fact witness for the plaintiff and an expert witness for the court in a criminal trial, she has acted:\nA. unethically by accepting dual roles.\nB. ethically as long as she did not have a prior relationship with the plaintiff.\nC. ethically as long as she clarifies her roles with all parties.\nD. ethically as long as she obtains a waiver from the court.\nAnswer:'}
+                 [{'type': 'text', 'text': 'Question: If a psychologist acts as both a fact witness for the plaintiff and an expert witness for the court in a criminal trial, she has acted:\nA. unethically by accepting dual roles.\nB. ethically as long as she did not have a prior relationship with the plaintiff.\nC. ethically as long as she clarifies her roles with all parties.\nD. ethically as long as she obtains a waiver from the court.\nAnswer Answer: (A, B, C, or D only):'}
                   ]}]
 text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
 inputs = processor(text=text, return_tensors="pt", padding=True)
@@ -27,4 +27,4 @@ generate_ids = model.generate(**inputs, max_new_tokens=16)
 print("Time to generate answer:", time.time() - start, "seconds")
 generate_ids = generate_ids[:, inputs.input_ids.size(1):]
 response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-print("Answer:", response)
+print("Answer: ", response)
