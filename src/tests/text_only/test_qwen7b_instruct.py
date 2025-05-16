@@ -2,6 +2,7 @@ from io import BytesIO
 from urllib.request import urlopen
 import librosa
 from transformers import Qwen2AudioForConditionalGeneration, AutoProcessor
+import time
 
 processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
                                           cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
@@ -17,7 +18,9 @@ text = processor.apply_chat_template(conversation, add_generation_prompt=True, t
 inputs = processor(text=text, return_tensors="pt", padding=True)
 # inputs.input_ids = inputs.input_ids.to("cuda")
 inputs = inputs.to("cuda")
+start = time.time()
 generate_ids = model.generate(**inputs, max_length=256)
+print("Time to generate answer:", time.time() - start, "seconds")
 generate_ids = generate_ids[:, inputs.input_ids.size(1):]
 response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-print(response)
+print("Answer:", response)
