@@ -1,8 +1,5 @@
+import ast
 def formatted_question_MMLU(row):
-    formatted_question = f"Question: {row['question']}\n"
-    f"A. {row['choices'][0]}\n"
-    f"B. {row['choices'][1]}\n"
-    f"C. {row['choices'][2]}\n"
-    f"D. {row['choices'][3]}\n"
-    f"Answer:"
+    choices = lst = ast.literal_eval(row['choices'])
+    formatted_question = f"Question: {row['question']}\nA. {choices[0]}\nB. {choices[1]}\nC. {choices[2]}\nD. {choices[3]}\nAnswer:"
     return formatted_question
