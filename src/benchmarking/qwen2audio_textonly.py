@@ -29,7 +29,7 @@ def qwen2audio_textonly_inference(MMLU_data):
         MMLU_data[col_name] = ""
     processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
                                             cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="cuda", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="auto", 
                                                             cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     for idx, row in tqdm(MMLU_data.iterrows()):
         if row["qwen2audio_textonly_response"] == "":
