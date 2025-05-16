@@ -29,7 +29,7 @@ def qwen2audio_textonly_inference(MMLU_data):
         MMLU_data[col_name] = ""
     processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
                                             cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="auto", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="cuda", 
                                                             cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     for idx, row in tqdm(MMLU_data.iterrows()):
         if row["qwen2audio_textonly_response"] == "":
@@ -37,10 +37,8 @@ def qwen2audio_textonly_inference(MMLU_data):
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
             inputs = processor(text=text, return_tensors="pt", padding=True)
             inputs = inputs.to("cuda")
-            print(text)
-            print("Generating")
+            breakpoint()
             generate_ids = model.generate(**inputs, max_length=256)
-            print("Generating")
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
             response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
             MMLU_data.at[idx, col_name] = response
