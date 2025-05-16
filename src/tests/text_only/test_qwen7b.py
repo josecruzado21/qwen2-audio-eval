@@ -7,6 +7,7 @@ model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B"
 processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B" ,trust_remote_code=True, cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
 prompt = "What is the capital of France?"
 inputs = processor(text=prompt, return_tensors="pt")
+inputs.input_ids = inputs.input_ids.to("cuda")
 generated_ids = model.generate(**inputs, max_length=256)
 generated_ids2 = generated_ids[:, inputs.input_ids.size(1):]
 response = processor.batch_decode(generated_ids2, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
