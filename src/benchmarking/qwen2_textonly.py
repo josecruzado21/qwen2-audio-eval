@@ -29,7 +29,7 @@ def qwen2_textonly_inference(MMLU_data):
         cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/"
     )
     for idx, row in tqdm(MMLU_data.iterrows()):
-        if (row["qwen2audio_textonly_response"] == "") | pd.isna(row["qwen2audio_textonly_response"]):
+        if (row[col_name] == "") | pd.isna(row[col_name]):
             prompt = qwen2_textonly_chat_prompt(row)
             response, history = model.chat(tokenizer, prompt, history=None, max_new_tokens=8)
             MMLU_data.at[idx, col_name] = response
