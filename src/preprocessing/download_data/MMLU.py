@@ -10,6 +10,7 @@ def download_and_sample_MMLU(n_questions = 500):
     df_MMLU["prompt_length"] = df_MMLU.question.str.len() + df_MMLU.choices.str.len()
     df_MMLU = df_MMLU.sort_values(by="prompt_length", ignore_index=True)
     df_MMLU = df_MMLU.loc[:n_questions]
+    df_MMLU.drop(columns=["prompt_length"], inplace=True)
     df_MMLU.to_csv(output_path, index=False)
     print("MMLU saved")
 
