@@ -13,12 +13,13 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 
 start = time.time()
-response, history = model.chat(tokenizer,"If a psychologist acts as both a fact witness for the plaintiff and an expert witness for the court in a criminal trial, she has acted:\n"
+response, history = model.chat(tokenizer,"Return ONLY the letter of the correct answer (A, B, C, or D). Your answer should be one character long A, B, C, or D \n"
+    "Question: If a psychologist acts as both a fact witness for the plaintiff and an expert witness for the court in a criminal trial, she has acted:\n"                         
     "A. unethically by accepting dual roles.\n"
     "B. ethically as long as she did not have a prior relationship with the plaintiff.\n"
     "C. ethically as long as she clarifies her roles with all parties.\n"
     "D. ethically as long as she obtains a waiver from the court.\n"
-    "Answer (A, B, C, or D only):", 
+    "Answer:", 
     history=None, 
     system = "Give ONLY the letter of the correct answer (A, B, C, or D). Your answer should be one character long A, B, C, or D",
     max_new_tokens=8)
