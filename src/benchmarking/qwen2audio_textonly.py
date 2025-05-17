@@ -41,7 +41,7 @@ def qwen2audio_textonly_inference(MMLU_data):
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
             response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
             MMLU_data.at[idx, col_name] = response
-            MMLU_data.to_csv(output_path)      
+            MMLU_data.to_csv(output_path, index=False)      
 
 if __name__ == "__main__":
     MMLU_data = pd.read_csv(os.path.join(root_path, "data", "MMLU.csv"))
