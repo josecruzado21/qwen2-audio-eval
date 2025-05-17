@@ -11,6 +11,7 @@ from tqdm import tqdm
 from utils.utils import formatted_question_MMLU
 from pathlib import Path
 import pandas as pd
+import math
 script_dir = Path(__file__).resolve()
 
 def qwen2audio_textonly_chat_prompt(row):
@@ -32,8 +33,7 @@ def qwen2audio_textonly_inference(MMLU_data):
     model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="auto", 
                                                             cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     for idx, row in tqdm(MMLU_data.iterrows()):
-        breakpoint()
-        if row["qwen2audio_textonly_response"] == "":
+        if (row["qwen2audio_textonly_response"] == "") | math.isnan(row["qwen2audio_textonly_response"]):
             conversation = qwen2audio_textonly_chat_prompt(row)
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
             inputs = processor(text=text, return_tensors="pt", padding=True)
