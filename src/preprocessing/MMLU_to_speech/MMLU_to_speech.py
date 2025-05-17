@@ -4,8 +4,7 @@ current_file_path = os.path.abspath(__file__)
 root_path = os.path.abspath(os.path.join(current_file_path, '../../../..'))
 sys.path.append(root_path)
 from dotenv import load_dotenv
-load_dotenv(dotenv_path = root_path)
-breakpoint()
+load_dotenv(dotenv_path = os.path.join(root_path, ".env"))
 from utils.utils import formatted_question_MMLU_speech
 from openai import OpenAI
 from tqdm import tqdm
