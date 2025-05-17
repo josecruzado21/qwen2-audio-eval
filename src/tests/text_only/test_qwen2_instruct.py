@@ -21,7 +21,6 @@ response, history = model.chat(tokenizer,"Return ONLY the letter of the correct 
     "D. ethically as long as she obtains a waiver from the court.\n"
     "Answer:", 
     history=None, 
-    system = "Give ONLY the letter of the correct answer (A, B, C, or D). Your answer should be one character long A, B, C, or D",
     max_new_tokens=8)
 end = time.time()
 print("Time to generate:", end - start)
