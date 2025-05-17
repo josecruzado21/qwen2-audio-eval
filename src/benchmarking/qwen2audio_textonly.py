@@ -23,7 +23,7 @@ def qwen2audio_textonly_chat_prompt(row):
     return conversation
 
 def qwen2audio_textonly_inference(MMLU_data):
-    output_path = script_dir / ".." / ".." / "data" / "MMLU_data.csv"
+    output_path = script_dir.parent / ".." / ".." / "data" / "MMLU_data.csv"
     col_name = "qwen2audio_textonly_response"
     if col_name not in MMLU_data.columns:
         MMLU_data[col_name] = ""
