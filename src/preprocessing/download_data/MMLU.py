@@ -11,6 +11,7 @@ def download_and_sample_MMLU(n_questions = 500):
     df_MMLU = df_MMLU.sort_values(by="prompt_length", ignore_index=True)
     df_MMLU = df_MMLU.loc[:n_questions]
     df_MMLU.to_csv(output_path, index=False)
+    print("MMLU saved")
 
 if __name__ == "__main__":
     download_and_sample_MMLU()
