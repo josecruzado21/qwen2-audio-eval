@@ -16,7 +16,7 @@ script_dir = Path(__file__).resolve()
 def qwen2audio_textonly_chat_prompt(row):
     formatted_question = formatted_question_MMLU(row)
     conversation = [
-        {'role': 'system', 'content': "Give ONLY the letter of the correct answer (A, B, C, or D). No explanation"}, 
+        {'role': 'system', 'content': "Give ONLY the letter of the correct answer (A, B, C, or D). Your answer should be one character long A, B, C, or D"}, 
         {"role": "user", "content": [
             {"type": "text", "text": formatted_question},
         ]}]
