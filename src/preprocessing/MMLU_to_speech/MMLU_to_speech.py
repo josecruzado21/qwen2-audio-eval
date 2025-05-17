@@ -25,7 +25,7 @@ def convert_MMLU_to_audio(MMLU_data):
     if col_name not in tqdm(MMLU_data.columns):
         MMLU_data[col_name] = 0
     for idx, row in MMLU_data.iterrows():
-        if MMLU_data[col_name] == 0:
+        if row[col_name] == 0:
             text_to_convert = formatted_question_MMLU_speech(row)
             openai_tts_MMLU(client, text_to_convert, idx)
             MMLU_data.at[idx, col_name] = 1
