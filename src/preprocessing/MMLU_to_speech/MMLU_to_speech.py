@@ -22,13 +22,16 @@ def openai_tts_MMLU(client, text, question_index):
 def convert_MMLU_to_audio(MMLU_data):
     client = OpenAI()
     col_name = "speech_version"
-    if col_name not in tqdm(MMLU_data.columns):
+    if col_name not in MMLU_data.columns:
         MMLU_data[col_name] = 0
+    if "speech_file" not in MMLU_data.columns:
+        MMLU_data["speech_file"] = ""
     for idx, row in tqdm(MMLU_data.iterrows()):
         if row[col_name] == 0:
             text_to_convert = formatted_question_MMLU_speech(row)
             openai_tts_MMLU(client, text_to_convert, idx)
             MMLU_data.at[idx, col_name] = 1
+            MMLU_data.at[idx, "speech_file"] = f"question_{idx}.wav"
             MMLU_data.to_csv(os.path.join(root_path, "data", "MMLU.csv"), index=False)
 
 if __name__ == "__main__":
