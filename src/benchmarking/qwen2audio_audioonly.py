@@ -6,7 +6,6 @@ sys.path.append(root_path)
 from urllib.request import urlopen
 from transformers import Qwen2AudioForConditionalGeneration, AutoProcessor
 from tqdm import tqdm
-from utils.utils import formatted_question_MMLU
 from pathlib import Path
 import pandas as pd
 import librosa
