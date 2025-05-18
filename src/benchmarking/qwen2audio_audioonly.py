@@ -11,7 +11,7 @@ import pandas as pd
 import librosa
 script_dir = Path(__file__).resolve()
 
-def qwen2audio_audioonly_chat_prompt(row, audio_filename):
+def qwen2audio_audioonly_chat_prompt(audio_filename):
     conversation = [
         {"role": "user", "content": [
             {"type": "audio", "audio_url": audio_filename},
@@ -30,7 +30,7 @@ def qwen2audio_audioonly_inference(MMLU_data):
 
     for idx, row in tqdm(MMLU_data.iterrows()):
         if (row[col_name] == "") | pd.isna(row[col_name]):
-            conversation = qwen2audio_audioonly_chat_prompt(row, row["speech_file"])
+            conversation = qwen2audio_audioonly_chat_prompt(os.path.join(root_path, "data", "audios", row["speech_file"]))
             text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
             audios = []
             for message in conversation:
