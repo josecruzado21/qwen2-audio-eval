@@ -42,7 +42,7 @@ def qwen2audio_audioonly_inference(MMLU_data):
                             audios.append(waveform)
             inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate = sampling_rate)
             # inputs = inputs.to("cuda")
-            generate_ids = model.generate(**inputs, max_new_tokens=8)
+            generate_ids = model.generate(**inputs, max_new_tokens=4)
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
             response = processor.batch_decode(generate_ids, skip_special_tokens=True, 
                                               clean_up_tokenization_spaces=False)[0]
