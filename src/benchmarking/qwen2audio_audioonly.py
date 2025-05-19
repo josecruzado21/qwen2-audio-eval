@@ -25,7 +25,7 @@ def qwen2audio_audioonly_inference(MMLU_data):
         MMLU_data[col_name] = ""
     processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="auto", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="cpu", 
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
 
     for idx, row in tqdm(MMLU_data.iterrows()):
@@ -42,7 +42,7 @@ def qwen2audio_audioonly_inference(MMLU_data):
                             audios.append(waveform)
             inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate = sampling_rate)
             # inputs = inputs.to("cuda")
-            generate_ids = model.generate(**inputs, max_new_tokens=4)
+            generate_ids = model.generate(**inputs, max_new_tokens=8)
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
             response = processor.batch_decode(generate_ids, skip_special_tokens=True, 
                                               clean_up_tokenization_spaces=False)[0]
