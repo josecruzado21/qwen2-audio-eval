@@ -23,10 +23,8 @@ def qwen2audio_audioonly_inference(MMLU_data):
     col_name = "qwen2audio_audioonly_response"
     if col_name not in MMLU_data.columns:
         MMLU_data[col_name] = ""
-    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
-                                              cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="auto", 
-                                                              cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct")
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", device_map="auto")
 
     for idx, row in tqdm(MMLU_data.iterrows()):
         if (row[col_name] == "") | pd.isna(row[col_name]):
@@ -37,10 +35,11 @@ def qwen2audio_audioonly_inference(MMLU_data):
                 if isinstance(message["content"], list):
                     for ele in message["content"]:
                         if ele["type"] == "audio":
-                            waveform, _ = librosa.load(ele["audio_url"], sr=processor.feature_extractor.sampling_rate)
+                            sampling_rate = processor.feature_extractor.sampling_rate
+                            waveform, _ = librosa.load(ele["audio_url"], sr=sampling_rate)
                             audios.append(waveform)
-            inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True)
-            # inputs = inputs.to("cuda")
+            inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate = sampling_rate)
+            inputs = inputs.to("cuda")
             generate_ids = model.generate(**inputs, max_new_tokens=8)
             generate_ids = generate_ids[:, inputs.input_ids.size(1):]
             response = processor.batch_decode(generate_ids, skip_special_tokens=True, 
