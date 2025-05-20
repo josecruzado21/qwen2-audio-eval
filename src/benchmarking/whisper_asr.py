@@ -1,5 +1,4 @@
 import torchaudio
-import os
 import whisper
 import numpy as np
 import pandas as pd

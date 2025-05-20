@@ -1,9 +1,6 @@
 import os
 import torchaudio
 import sys
-current_file_path = os.path.abspath(__file__)
-root_path = os.path.abspath(os.path.join(current_file_path, '../../..'))
-sys.path.append(root_path)
 from transformers import Qwen2AudioForConditionalGeneration, AutoProcessor
 from tqdm import tqdm
 from pathlib import Path
@@ -30,7 +27,8 @@ def qwen2audio_asr_inference():
         waveform, sample_rate, transcript, *_ = librispeech[idx]
         original_text.append(transcript)
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
-        inputs = processor(text="<|audio_bos|><|AUDIO|><|audio_eos|>Transcribe the audio:", audio=[waveform_np], return_tensors="pt", padding=True)
+        inputs = processor(text="<|audio_bos|><|AUDIO|><|audio_eos|>Transcribe the audio:", audio=[waveform_np], sampling_rate=sample_rate, 
+                           return_tensors="pt", padding=True)
         inputs = inputs.to("cuda")
         generate_ids = model.generate(**inputs, max_new_tokens=256)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
