@@ -27,7 +27,7 @@ def qwen2audio_asr_inference():
 
     processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B", 
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="auto", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="cuda", 
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     
     initial_idx = len(transcripts)
