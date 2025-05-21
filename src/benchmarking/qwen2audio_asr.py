@@ -37,7 +37,7 @@ def qwen2audio_asr_inference():
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
         inputs = processor(text="<|audio_bos|><|AUDIO|><|audio_eos|>Transcribe the audio:", audio=[waveform_np], sampling_rate=sample_rate, 
                            return_tensors="pt", padding=True)
-        inputs = inputs.to("cuda")
+        # inputs = inputs.to("cuda")
         generate_ids = model.generate(**inputs, max_new_tokens=256)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
