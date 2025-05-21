@@ -28,7 +28,7 @@ def whisper_inference():
     model = whisper.load_model("large", download_root =  "/share/data/lang/users/ttic_31110/jcruzado/models/whisper")
 
     initial_idx = len(transcripts)
-    for idx in tqdm(initial_idx, range(200)):
+    for idx in tqdm(range(initial_idx, 200)):
         waveform, sample_rate, transcript, *_ = librispeech[idx]
         original_text.append(transcript)
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
