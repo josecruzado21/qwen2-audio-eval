@@ -42,6 +42,7 @@ def qwen2audio_asr_inference():
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
         transcripts.append(response)
+        df=pd.DataFrame(columns=["original_text", "transcripts"])
         df["original_text"] = original_text
         df["transcripts"] = transcripts
         df.to_csv(output_path, index=False)
