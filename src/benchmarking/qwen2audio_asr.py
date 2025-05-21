@@ -30,7 +30,8 @@ def qwen2audio_asr_inference():
     model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="auto", 
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     
-    for idx in tqdm(len(transcripts), range(200)):
+    initial_idx = len(transcripts)
+    for idx in tqdm(initial_idx, range(200)):
         waveform, sample_rate, transcript, *_ = librispeech[idx]
         original_text.append(transcript)
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
