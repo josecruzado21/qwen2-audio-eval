@@ -33,6 +33,7 @@ def whisper_inference():
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
         result = model.transcribe(waveform_np, language="en")
         transcripts.append(result["text"])
+        breakpoint()
         df["original_text"] = original_text
         df["transcripts"] = transcripts
         df.to_csv(output_path, index=False)
