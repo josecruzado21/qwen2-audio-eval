@@ -11,6 +11,14 @@ script_dir = Path(__file__).resolve()
 def qwen2audio_asr_inference():
     data_type = "dev-clean"
     output_path = script_dir.parent / ".." / ".." / "data" / f"librispeech_qwen2audio_{data_type}.csv"
+    if os.path.exists(output_path):
+        df = pd.read_csv(output_path)
+        original_text, transcripts = list(df["original_text"]), list(df["transcripts"])
+    else:
+        df=pd.DataFrame(columns=["original_text", "transcripts"])
+        original_text, transcripts = [], []
+
+
     librispeech = torchaudio.datasets.LIBRISPEECH(
             root = "/share/data/lang/users/ttic_31110/jcruzado/data/librispeech_dev_clean", 
             url=data_type, 
@@ -21,9 +29,7 @@ def qwen2audio_asr_inference():
     model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="auto", 
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     
-    original_text = []
-    transcripts = []
-    for idx in tqdm(range(200)):
+    for idx in tqdm(len(transcripts), range(200)):
         waveform, sample_rate, transcript, *_ = librispeech[idx]
         original_text.append(transcript)
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
@@ -34,7 +40,6 @@ def qwen2audio_asr_inference():
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
         transcripts.append(response)
-    df = pd.DataFrame()
     df["original_text"] = original_text
     df["transcripts"] = transcripts
     df.to_csv(output_path)
