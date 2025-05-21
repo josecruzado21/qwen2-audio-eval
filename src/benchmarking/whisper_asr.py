@@ -17,6 +17,7 @@ def whisper_inference():
         original_text, transcripts = list(df["original_text"]), list(df["transcripts"])
     else:
         df=pd.DataFrame(columns=["original_text", "transcripts"])
+        df.to_csv(output_path, index=False)
         original_text, transcripts = [], []
 
     # Load Librispeech
@@ -34,9 +35,9 @@ def whisper_inference():
         waveform_np = waveform.squeeze().numpy().astype(np.float32)
         result = model.transcribe(waveform_np, language="en")
         transcripts.append(result["text"])
-    df["original_text"] = original_text
-    df["transcripts"] = transcripts
-    df.to_csv(output_path)
+        df["original_text"] = original_text
+        df["transcripts"] = transcripts
+        df.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
     whisper_inference()
