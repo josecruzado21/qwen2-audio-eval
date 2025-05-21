@@ -16,7 +16,7 @@ def whisper_inference():
             root = "/share/data/lang/users/ttic_31110/jcruzado/data/librispeech_dev_clean", 
             url=data_type, 
             download=False)
-    model = whisper.load_model("large", download_root =  "/share/data/lang/users/ttic_31110/jcruzado/model/whisper")
+    model = whisper.load_model("large", download_root =  "/share/data/lang/users/ttic_31110/jcruzado/models/whisper")
 
     original_text = []
     transcripts = []
