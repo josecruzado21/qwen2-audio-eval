@@ -19,7 +19,7 @@ def clean_qwen2_MMLU_response_clean(MMLU_df):
         MMLU_df[col_name] = ""
     client = OpenAI()
     for idx, row in tqdm(MMLU_df.iterrows()):
-        if ((row[col_name] == "") | pd.isna(row[col_name])) & (row["qwen2audio_textonly_response"]!="" | ~pd.isna(row["qwen2audio_textonly_response"])):
+        if ((row[col_name] == "") or pd.isna(row[col_name])) & ((row["qwen2audio_textonly_response"]!="") or (~pd.isna(row["qwen2audio_textonly_response"]))):
             original_prompt = qwen2_textonly_chat_prompt(row)
             start_index = original_prompt.find("\nA.")
             original_prompt = original_prompt[start_index+1:]
