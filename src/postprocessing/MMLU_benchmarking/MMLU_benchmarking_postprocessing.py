@@ -30,7 +30,6 @@ def clean_qwen2_MMLU_response_clean(MMLU_df):
                     {"role": "user", "content": prompt}
                 ]
             )
-            print(response.choices[0].message.content)
             MMLU_df.at[idx, col_name] = response.choices[0].message.content
             MMLU_df.to_csv(output_path, index=False)
 
