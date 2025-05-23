@@ -19,12 +19,12 @@ def clean_qwen2_MMLU_response_clean(MMLU_df):
         MMLU_df[col_name] = ""
     client = OpenAI()
     for idx, row in tqdm(MMLU_df.iterrows()):
-        if ((row[col_name] == "") or pd.isna(row[col_name])) and ((row["qwen2audio_textonly_response"]!="") or (not pd.isna(row["qwen2audio_textonly_response"]))):
+        if ((row[col_name] == "") or pd.isna(row[col_name])) and not ((row["qwen2_textonly_response"]=="") or (pd.isna(row["qwen2_textonly_response"]))):
             original_prompt = qwen2_textonly_chat_prompt(row)
             start_index = original_prompt.find("\nA.")
             original_prompt = original_prompt[start_index+1:]
             original_response = row["qwen2_textonly_response"] 
-            prompt = f"I will give the alternatives I gave to another LLM and its answer. Your task is to tell me which alternative the model is referring to, if it is A, B, C or D. Your answer should only be a letter or output NA if you cannot identify the alternative the other LLM was referring to\nalternatives: {original_prompt}\nmodel answer: {original_response}"
+            prompt = f"I will give the alternatives I gave to another LLM and its answer. Your task is to tell me which alternative the model is referring to, if it is A, B, C or D. Your answer should only be a letter or output BLANK if you cannot identify the alternative the other LLM was referring to\nalternatives: {original_prompt}\nmodel answer: {original_response}"
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
@@ -35,30 +35,55 @@ def clean_qwen2_MMLU_response_clean(MMLU_df):
             MMLU_df.at[idx, col_name] = response.choices[0].message.content
             MMLU_df.to_csv(output_path, index=False)
 
-# def clean_qwen2audio_MMLU_response_clean(MMLU_df):
-#     output_path = script_dir.parent / ".." / ".." / ".." / "data" / "MMLU.csv"
-#     col_name = "qwen2audio_audioonly_response_clean"
-#     if col_name not in MMLU_df.columns:
-#         MMLU_df[col_name] = ""
-#     client = OpenAI()
-#     for idx, row in tqdm(MMLU_df.iterrows()):
-#         if (row[col_name] == "") | pd.isna(row[col_name]):
-#             original_prompt = qwen2_textonly_chat_prompt(row)
-#             start_index = original_prompt.find("\nA.")
-#             original_prompt = original_prompt[start_index+1:]
-#             original_response = row["qwen2audio_audioonly_response"] 
-#             prompt = f"I will give the alternatives I gave to another LLM and its answer. Your task is to tell me which alternative the model is referring to, if it is A, B, C or D. Your answer should only be a letter or output NA if you cannot identify the alternative the other LLM was referring to\nalternatives: {original_prompt}\nmodel answer: {original_response}"
-#             response = client.chat.completions.create(
-#                 model="gpt-4o-mini",
-#                 messages=[
-#                     {"role": "system", "content": "You are a helpful assistant."},
-#                     {"role": "user", "content": prompt}
-#                 ]
-#             )
-#             MMLU_df.at[idx, col_name] = response.choices[0].message.content
-#             MMLU_df.to_csv(output_path, index=False)
+def clean_qwen2audio_textonly_MMLU_response_clean(MMLU_df):
+    output_path = script_dir.parent / ".." / ".." / ".." / "data" / "MMLU.csv"
+    col_name = "qwen2audio_textonly_response_clean"
+    if col_name not in MMLU_df.columns:
+        MMLU_df[col_name] = ""
+    client = OpenAI()
+    for idx, row in tqdm(MMLU_df.iterrows()):
+        if ((row[col_name] == "") or pd.isna(row[col_name])) and not ((row["qwen2audio_textonly_response"]=="") or (pd.isna(row["qwen2audio_textonly_response"]))):
+            original_prompt = qwen2_textonly_chat_prompt(row)
+            start_index = original_prompt.find("\nA.")
+            original_prompt = original_prompt[start_index+1:]
+            original_response = row["qwen2audio_textonly_response"] 
+            prompt = f"I will give the alternatives I gave to another LLM and its answer. Your task is to tell me which alternative the model is referring to, if it is A, B, C or D. Your answer should only be a letter or output BLANK if you cannot identify the alternative the other LLM was referring to\nalternatives: {original_prompt}\nmodel answer: {original_response}"
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            MMLU_df.at[idx, col_name] = response.choices[0].message.content
+            MMLU_df.to_csv(output_path, index=False)
+
+def clean_qwen2audio_audioonly_MMLU_response_clean(MMLU_df):
+    output_path = script_dir.parent / ".." / ".." / ".." / "data" / "MMLU.csv"
+    col_name = "qwen2audio_audioonly_response_clean"
+    if col_name not in MMLU_df.columns:
+        MMLU_df[col_name] = ""
+    client = OpenAI()
+    for idx, row in tqdm(MMLU_df.iterrows()):
+        if ((row[col_name] == "") or pd.isna(row[col_name])) and not ((row["qwen2audio_audioonly_response"]=="") or (pd.isna(row["qwen2audio_audioonly_response"]))):
+            original_prompt = qwen2_textonly_chat_prompt(row)
+            start_index = original_prompt.find("\nA.")
+            original_prompt = original_prompt[start_index+1:]
+            original_response = row["qwen2audio_audioonly_response"] 
+            prompt = f"I will give the alternatives I gave to another LLM and its answer. Your task is to tell me which alternative the model is referring to, if it is A, B, C or D. Your answer should only be a letter or output BLANK if you cannot identify the alternative the other LLM was referring to\nalternatives: {original_prompt}\nmodel answer: {original_response}"
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            MMLU_df.at[idx, col_name] = response.choices[0].message.content
+            MMLU_df.to_csv(output_path, index=False)
 
 
 if __name__ == "__main__":
     MMLU_df = pd.read_csv(os.path.join(root_path, "data", "MMLU.csv"))
     clean_qwen2_MMLU_response_clean(MMLU_df)
+    clean_qwen2audio_textonly_MMLU_response_clean(MMLU_df)
+    clean_qwen2audio_audioonly_MMLU_response_clean(MMLU_df)
