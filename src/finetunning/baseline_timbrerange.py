@@ -25,24 +25,25 @@ def qwen2audio_timbre_range_inference():
     output_path = script_dir.parent / ".." / ".." / "data" / f"fintune_qwen2audio_timbre_range.csv"
     if os.path.exists(output_path):
         df = pd.read_csv(output_path)
-        audio_index, timbre_range = list(df["audio_index"]), list(df["timbre_range"])
+        audio_index, predicted_ranges, labels = list(df["audio_index"]), list(df["labels"]), list(df["timbre_range_pre_ft"])
     else:
-        df=pd.DataFrame(columns=["audio_index", "timbre_range"])
+        df=pd.DataFrame(columns=["audio_index", "labels", "timbre_range_pre_ft"])
         df.to_csv(output_path, index=False)
-        audio_index, timbre_range = [], []
+        audio_index, predicted_ranges, labels = [], [], []
 
 
     timbre_range = load_dataset("ccmusic-database/timbre_range", "range")
 
-    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B", 
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B",
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="cpu", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="auto",
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     
-    initial_idx = len(timbre_range)
+    initial_idx = len(predicted_ranges)
     for idx in tqdm(range(initial_idx, 200)):
         waveform = timbre_range[data_type]["audio"][idx]["array"]
         sample_rate = timbre_range[data_type]["audio"][idx]["sampling_rate"]
+        label = timbre_range[data_type]["label"][idx]
         audio_index.append(idx)
         waveform_resampled = resample_numpy_audio(waveform, sample_rate)
         conversation = qwen2audio_timbre_range_prompt(waveform_resampled)
@@ -52,10 +53,12 @@ def qwen2audio_timbre_range_inference():
         generate_ids = model.generate(**inputs, max_new_tokens=16)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-        timbre_range.append(response)
-        df=pd.DataFrame(columns=["audio_index", "timbre_range"])
+        predicted_ranges.append(response)
+        labels.append(label)
+        df=pd.DataFrame(columns=["audio_index", "labels", "timbre_range_pre_ft"])
         df["audio_index"] = audio_index
-        df["timbre_range"] = timbre_range
+        df["labels"] = labels
+        df["timbre_range_pre_ft"] = timbre_range
         df.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
