@@ -36,7 +36,7 @@ def qwen2audio_timbre_range_inference():
 
     processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B",
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="auto",
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="cpu",
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     
     initial_idx = len(predicted_ranges)
