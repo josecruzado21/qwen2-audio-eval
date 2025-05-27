@@ -50,7 +50,7 @@ def qwen2audio_timbre_range_inference():
         text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
         audios = [waveform_resampled]
         inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate=16000)
-        inputs = inputs.to("cuda")
+        # inputs = inputs.to("cuda")
         generate_ids = model.generate(**inputs, max_new_tokens=16)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
