@@ -36,7 +36,7 @@ def qwen2audio_timbre_range_inference():
 
     processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B",
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="cpu",
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="auto",
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
     
     initial_idx = len(predicted_ranges)
@@ -50,6 +50,7 @@ def qwen2audio_timbre_range_inference():
         text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
         audios = [waveform_resampled]
         inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate=16000)
+        inputs = inputs.to("cuda")
         generate_ids = model.generate(**inputs, max_new_tokens=16)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
