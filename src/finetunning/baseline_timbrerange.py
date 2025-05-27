@@ -1,0 +1,62 @@
+import os
+import sys
+current_file_path = os.path.abspath(__file__)
+root_path = os.path.abspath(os.path.join(current_file_path, '../../..'))
+sys.path.append(root_path)
+from transformers import Qwen2AudioForConditionalGeneration, AutoProcessor
+from tqdm import tqdm
+from pathlib import Path
+import pandas as pd
+import librosa
+from datasets import load_dataset
+from utils.utils import resample_numpy_audio
+script_dir = Path(__file__).resolve()
+
+def qwen2audio_timbre_range_prompt(audio):
+    conversation = [
+        {"role": "user", "content": [
+            {"type": "audio", "audio": audio},
+            {"type": "text", "text": "Listen the audio and classify the timbre range: answer 0 for narrow, 1 for moderate and 2 for wide. Answer only with a number"}
+        ]},]
+    return conversation
+
+def qwen2audio_timbre_range_inference():
+    data_type = "train"
+    output_path = script_dir.parent / ".." / ".." / "data" / f"fintune_qwen2audio_timbre_range.csv"
+    if os.path.exists(output_path):
+        df = pd.read_csv(output_path)
+        audio_index, timbre_range = list(df["audio_index"]), list(df["timbre_range"])
+    else:
+        df=pd.DataFrame(columns=["audio_index", "timbre_range"])
+        df.to_csv(output_path, index=False)
+        audio_index, timbre_range = [], []
+
+
+    timbre_range = load_dataset("ccmusic-database/timbre_range", "range")
+
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B", 
+                                              cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="cpu", 
+                                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
+    
+    initial_idx = len(timbre_range)
+    for idx in tqdm(range(initial_idx, 200)):
+        waveform = timbre_range[data_type]["audio"][idx]["array"]
+        sample_rate = timbre_range[data_type]["audio"][idx]["sampling_rate"]
+        audio_index.append(idx)
+        waveform_resampled = resample_numpy_audio(waveform, sample_rate)
+        conversation = qwen2audio_timbre_range_prompt(waveform_resampled)
+        text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
+        audios = [waveform_resampled]
+        inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate=16000)
+        generate_ids = model.generate(**inputs, max_new_tokens=16)
+        generate_ids = generate_ids[:, inputs.input_ids.size(1):]
+        response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+        timbre_range.append(response)
+        df=pd.DataFrame(columns=["audio_index", "timbre_range"])
+        df["audio_index"] = audio_index
+        df["timbre_range"] = timbre_range
+        df.to_csv(output_path, index=False)
+
+if __name__ == "__main__":
+    qwen2audio_timbre_range_inference()
