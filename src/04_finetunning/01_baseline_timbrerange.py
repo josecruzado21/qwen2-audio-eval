@@ -34,9 +34,9 @@ def qwen2audio_timbre_range_inference():
 
     timbre_range = load_dataset("ccmusic-database/timbre_range", "range")
 
-    processor = AutoProcessor.from_pretrained("Qwen2-Audio-7B-Instruct", 
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen2-Audio-7B-Instruct", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B-Instruct", 
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/",
                                                                device_map="cpu")
     
