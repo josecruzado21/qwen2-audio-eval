@@ -16,7 +16,7 @@ def qwen2audio_timbre_range_prompt(audio):
     conversation = [
         {"role": "user", "content": [
             {"type": "audio", "audio": audio},
-            {"type": "text", "text": "Listen the audio and classify the timbre range: answer 0 for narrow, 1 for moderate and 2 for wide. Answer only with a number"}
+            {"type": "text", "text": "Listen the audio and classify the timbre range in one of 3 numbers: answer 0 for narrow, 1 for moderate and 2 for wide. Answer ONLY with a number"}
         ]},]
     return conversation
 
@@ -34,9 +34,9 @@ def qwen2audio_timbre_range_inference():
 
     timbre_range = load_dataset("ccmusic-database/timbre_range", "range")
 
-    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B", 
+    processor = AutoProcessor.from_pretrained("Qwen2-Audio-7B-Instruct", 
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", 
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen2-Audio-7B-Instruct", 
                                                                cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/",
                                                                device_map="cpu")
     
