@@ -179,4 +179,4 @@ cython_debug/
 *.csv
 *.wav
 */finetunning_data/*
-*/finetunning/outputs/*
+*/04_finetunning/outputs/*
