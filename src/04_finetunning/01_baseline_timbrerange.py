@@ -34,10 +34,11 @@ def qwen2audio_timbre_range_inference():
 
     timbre_range = load_dataset("ccmusic-database/timbre_range", "range")
 
-    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B",
+    processor = AutoProcessor.from_pretrained("Qwen/Qwen2-Audio-7B", 
                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
-    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", device_map="cpu",
-                                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/")
+    model = Qwen2AudioForConditionalGeneration.from_pretrained("Qwen/Qwen2-Audio-7B", 
+                                                               cache_dir = "/share/data/lang/users/ttic_31110/jcruzado/models/",
+                                                               device_map="auto")
     
     initial_idx = len(predicted_ranges)
     for idx in tqdm(range(initial_idx, 200)):
@@ -50,7 +51,7 @@ def qwen2audio_timbre_range_inference():
         text = processor.apply_chat_template(conversation, add_generation_prompt=True, tokenize=False)
         audios = [waveform_resampled]
         inputs = processor(text=text, audio=audios, return_tensors="pt", padding=True, sampling_rate=16000)
-        # inputs = inputs.to("cuda")
+        inputs = inputs.to("mps")
         generate_ids = model.generate(**inputs, max_new_tokens=16)
         generate_ids = generate_ids[:, inputs.input_ids.size(1):]
         response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
@@ -59,7 +60,7 @@ def qwen2audio_timbre_range_inference():
         df=pd.DataFrame(columns=["audio_index", "labels", "timbre_range_pre_ft"])
         df["audio_index"] = audio_index
         df["labels"] = labels
-        df["timbre_range_pre_ft"] = timbre_range
+        df["timbre_range_pre_ft"] = predicted_ranges
         df.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
